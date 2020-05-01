@@ -20,7 +20,7 @@ test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
 
 def train(model, log_name):
     # 定义损失函数和优化器
-    writer = SummaryWriter('./log/' + log_name + '/')
+    writer = SummaryWriter(f'./log/' + log_name + '/')
     lossfunc = torch.nn.CrossEntropyLoss().cuda()
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learn_rate)
     # 开始训练
