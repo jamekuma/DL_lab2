@@ -2,14 +2,14 @@ import torch
 import torch.nn.functional
 from torchvision import datasets
 import torch.utils.data
-from MyAlexNet import MyAlexNet
+from MyAlexNet import MyAlexNet1, MyAlexNet2, MyAlexNet3, MyAlexNet4
 from Cifar10Dataset import Cifar10Dataset
 from torch.utils.tensorboard import SummaryWriter
 
 # 定义全局变量
-n_epochs = 20  # epoch 的数目
-batch_size = 50  # 决定每次读取多少图片
-learn_rate = 0.001 # 学习率
+n_epochs = 10  # epoch 的数目
+batch_size = 100  # 决定每次读取多少图片
+learn_rate = 3e-5 # 学习率
 
 train_dataset = Cifar10Dataset('./cifar-10-batches-py/', train=True)
 test_dataset = Cifar10Dataset('./cifar-10-batches-py/', train=False)
@@ -17,16 +17,15 @@ test_dataset = Cifar10Dataset('./cifar-10-batches-py/', train=False)
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size)
 
-model = MyAlexNet().cuda()
 
-
-def train():
+def train(model, log_name):
     # 定义损失函数和优化器
-    model.train()
+    writer = SummaryWriter('./log/' + log_name + '/')
     lossfunc = torch.nn.CrossEntropyLoss().cuda()
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learn_rate)
     # 开始训练
     for epoch in range(n_epochs):
+        model.train()
         train_loss = 0.0
         for data, target in train_loader:
             data = data.cuda()
@@ -38,14 +37,17 @@ def train():
             optimizer.step()  # 将参数更新值施加到 net 的 parameters 上
             train_loss += loss.item() * data.size(0)
         train_loss = train_loss / len(train_loader.dataset)
-        print('Epoch:  {}  \tTraining Loss: {:.6f}'.format(epoch + 1, train_loss))
+        print('\tEpoch:  {}  \tTraining Loss: {:.6f}'.format(epoch + 1, train_loss))
         # 每遍历一遍数据集，测试一下准确率
-        test()
-    torch.save(model, 'model.ckpt')
+        accuracy = test(model)
+        writer.add_scalar('train/Loss', train_loss, epoch + 1)
+        writer.add_scalar('test/Accuracy', accuracy, epoch + 1)
+        writer.flush()
+    writer.close()
 
 
 # 在数据集上测试神经网络
-def test():
+def test(model):
     model.eval()
     correct = 0
     total = 0
@@ -58,9 +60,12 @@ def test():
             _, predicted = torch.max(outputs.data, 1)   # 概率最大的就是输出的类别
             total += labels.size(0)
             correct += (predicted == labels).sum().item()  # 有几个相同的
-    print('test Accuracy: %d %%' % (
+    print('\ttest Accuracy: %.4f %%' % (
             100 * correct / total))
     return 100.0 * correct / total
 
 if __name__ == '__main__':
-    train()
+    print('MyAlexNet1:')
+    AlexNet1 = MyAlexNet1().cuda()
+    train(AlexNet1, 'AlexNet1')
+    torch.save(AlexNet1, 'AlexNet1.ckpt')
