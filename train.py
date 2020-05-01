@@ -7,7 +7,7 @@ from Cifar10Dataset import Cifar10Dataset
 from torch.utils.tensorboard import SummaryWriter
 
 # 定义全局变量
-n_epochs = 10  # epoch 的数目
+n_epochs = 100  # epoch 的数目
 batch_size = 100  # 决定每次读取多少图片
 learn_rate = 3e-5 # 学习率
 
@@ -69,3 +69,18 @@ if __name__ == '__main__':
     AlexNet1 = MyAlexNet1().cuda()
     train(AlexNet1, 'AlexNet1')
     torch.save(AlexNet1, 'AlexNet1.ckpt')
+    
+    print('MyAlexNet2:')
+    AlexNet2 = MyAlexNet2().cuda()
+    train(AlexNet2, 'AlexNet2')
+    torch.save(AlexNet2, 'AlexNet2.ckpt')
+    
+    print('MyAlexNet3:')
+    AlexNet3 = MyAlexNet3().cuda()
+    train(AlexNet3, 'AlexNet3')
+    torch.save(AlexNet3, 'AlexNet3.ckpt')
+    
+    print('MyAlexNet4:')
+    AlexNet4 = MyAlexNet4().cuda()
+    train(AlexNet4, 'AlexNet4')
+    torch.save(AlexNet4, 'AlexNet4.ckpt')

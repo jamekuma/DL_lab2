@@ -9,7 +9,7 @@ class FullAlexNet(torch.nn.Module):
         super(FullAlexNet, self).__init__()
         self.conv_layers = nn.Sequential(  # 五层卷积层
             # 卷积层1
-            nn.Conv2d(in_channels=3, out_channels=96, kernel_size=11, stride=4),
+            nn.Conv2d(in_channels=3, out_channels=96, kernel_size=11, stride=4, padding=2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2),
             nn.LocalResponseNorm(size=5),
